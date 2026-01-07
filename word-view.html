@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đọc văn bản</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #wordOutput {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            line-height: 1.6;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wordOutput">Đang tải nội dung...</div>
+
+    <script>
+        // Lấy ?file=word/xxx.docx
+        const params = new URLSearchParams(window.location.search);
+        const filePath = params.get("file");
+
+        if (!filePath) {
+            document.getElementById("wordOutput").innerHTML = "❌ Không có file Word";
+        } else {
+            fetch(filePath)
+                .then(res => res.arrayBuffer())
+                .then(buffer => mammoth.convertToHtml({ arrayBuffer: buffer }))
+                .then(result => {
+                    document.getElementById("wordOutput").innerHTML = result.value;
+                })
+                .catch(err => {
+                    document.getElementById("wordOutput").innerHTML = "❌ Không đọc được file Word";
+                    console.error(err);
+                });
+        }
+    </script>
+
+</body>
+</html>
